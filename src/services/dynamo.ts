@@ -1,6 +1,6 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import crypto from "node:crypto";
-import { CriarClienteInput } from "../handlers/cadastro.js";
+import type { CriarClienteInput } from "../handlers/cadastro.js";
 
 const REGIAO = "us-east-2";
 export const dynamoClient = new DynamoDBClient({ region: REGIAO });
