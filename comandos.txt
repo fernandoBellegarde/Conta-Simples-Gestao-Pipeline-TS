@@ -1,2 +1,4 @@
 Rodar no terminal sempre que terminar o codigo: npx tsc
 Zipar a dis: cp package.json dist/ && cd dist && zip -r ../funcao.zip . && cd ..
+
+Para rodar o front end: npm run serve
