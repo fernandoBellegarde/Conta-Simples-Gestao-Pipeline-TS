@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Novo Cliente — Conta Simples</title>
+    <style>
+      :root {
+        --black:  #231f20;
+        --green:  #0f352b;
+        --cream:  #fefdf3;
+        --lime:   #dfffae;
+        --blue:   #b2f0ff;
+        --navy:   #002140;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+        background: var(--cream);
+        color: var(--black);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ── Header ── */
+      header {
+        background: var(--green);
+        height: 60px;
+        padding: 0 32px;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo-badge {
+        width: 34px;
+        height: 34px;
+        background: var(--lime);
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-name {
+        color: var(--cream);
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+
+      .logo-name strong { color: var(--lime); }
+
+      /* ── Main ── */
+      main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 20px;
+      }
+
+      /* ── Card ── */
+      .card {
+        width: 100%;
+        max-width: 460px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 40px rgba(15, 53, 43, 0.14);
+      }
+
+      .card-top {
+        background: var(--green);
+        padding: 30px 36px 34px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(223, 255, 174, 0.12);
+        border: 1px solid rgba(223, 255, 174, 0.28);
+        color: var(--lime);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 4px 11px;
+        border-radius: 100px;
+        margin-bottom: 16px;
+      }
+
+      .tag::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: var(--lime);
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .card-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--cream);
+        letter-spacing: -0.5px;
+        line-height: 1.15;
+        margin-bottom: 8px;
+      }
+
+      .card-sub {
+        font-size: 14px;
+        color: rgba(254, 253, 243, 0.55);
+        line-height: 1.5;
+      }
+
+      .card-body {
+        background: #fff;
+        padding: 36px 36px 32px;
+      }
+
+      /* ── Fields ── */
+      .field { margin-bottom: 18px; }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--navy);
+        margin-bottom: 7px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #e8eaed;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+        color: var(--black);
+        background: #f8f9fa;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+      }
+
+      input::placeholder { color: #c2c8d1; }
+
+      input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(15, 53, 43, 0.08);
+        background: #fff;
+      }
+
+      input:valid:not(:placeholder-shown):not(:focus) {
+        border-color: #86efac;
+      }
+
+      /* ── Divider ── */
+      .divider {
+        height: 1px;
+        background: #f1f3f5;
+        margin: 24px 0 20px;
+      }
+
+      /* ── Button ── */
+      .btn {
+        width: 100%;
+        background: var(--green);
+        color: var(--lime);
+        border: none;
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.18s, transform 0.1s;
+      }
+
+      .btn:hover:not(:disabled) { background: #0a2620; }
+      .btn:active:not(:disabled) { transform: scale(0.985); }
+      .btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+      /* ── Messages ── */
+      .msg {
+        display: none;
+        margin-top: 16px;
+        padding: 13px 16px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.45;
+      }
+
+      .msg.ok  { display: block; background: var(--lime);  color: var(--green); }
+      .msg.err { display: block; background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+
+      /* ── Spinner ── */
+      .spin {
+        width: 16px; height: 16px;
+        border: 2.5px solid var(--lime);
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin .65s linear infinite;
+        flex-shrink: 0;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ── Footer ── */
+      footer {
+        background: var(--navy);
+        color: rgba(254, 253, 243, 0.45);
+        text-align: center;
+        font-size: 12px;
+        padding: 14px;
+      }
+      footer b { color: var(--lime); font-weight: 600; }
+    </style>
+  </head>
+  <body>
+
+    <header>
+      <div class="logo">
+        <div class="logo-badge">CS</div>
+        <span class="logo-name">Conta<strong>Simples</strong></span>
+      </div>
+    </header>
+
+    <main>
+      <div class="card">
+
+        <div class="card-top">
+          <div class="tag">Pipeline de Clientes</div>
+          <h1 class="card-title">Cadastro de<br>Novo Cliente</h1>
+          <p class="card-sub">Preencha os dados abaixo para iniciar o processo de onboarding.</p>
+        </div>
+
+        <div class="card-body">
+          <form id="formCadastro">
+
+            <div class="field">
+              <label for="nome">Nome da Empresa</label>
+              <input type="text" id="nome" required placeholder="Tech Solutions Ltda" />
+            </div>
+
+            <div class="field">
+              <label for="email">E-mail Corporativo</label>
+              <input type="email" id="email" required placeholder="contato@empresa.com.br" />
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" required placeholder="11 98765-4321" />
+              </div>
+              <div class="field">
+                <label for="gasto">Gasto Mensal (R$)</label>
+                <input type="number" id="gasto" required placeholder="50000" min="0" />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <button type="submit" class="btn" id="btnSubmit">
+              Cadastrar Cliente
+            </button>
+
+          </form>
+
+          <p id="mensagem" class="msg"></p>
+        </div>
+
+      </div>
+    </main>
+
+    <footer>
+      &copy; 2025 <b>Conta Simples</b> — Todos os direitos reservados
+    </footer>
+
+    <script>
+      const API_URL = "/api/clientes";
+
+      document.getElementById("formCadastro").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btnSubmit");
+        const msg = document.getElementById("mensagem");
+
+        btn.innerHTML = '<div class="spin"></div> Enviando...';
+        btn.disabled = true;
+        msg.className = "msg";
+
+        const payload = {
+          nome_empresa:    document.getElementById("nome").value,
+          email_corp:      document.getElementById("email").value,
+          telefone:        document.getElementById("telefone").value,
+          potencial_gasto: Number(document.getElementById("gasto").value),
+        };
+
+        try {
+          const res = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (res.ok) {
+            msg.textContent = "✓ Cliente cadastrado e enviado para processamento!";
+            msg.className = "msg ok";
+            document.getElementById("formCadastro").reset();
+          } else {
+            msg.textContent = "Erro ao cadastrar o cliente. Verifique os dados e tente novamente.";
+            msg.className = "msg err";
+          }
+        } catch {
+          msg.textContent = "Falha na comunicação com o servidor.";
+          msg.className = "msg err";
+        } finally {
+          btn.textContent = "Cadastrar Cliente";
+          btn.disabled = false;
+        }
+      });
+    </script>
+
+  </body>
+</html>
