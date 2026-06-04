@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 .vite/
 
 .zip
+
+# Local test scripts (não versionar)
+tests/
