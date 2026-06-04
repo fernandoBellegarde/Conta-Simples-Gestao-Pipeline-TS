@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/fernandoBellegarde/Conta-Simples-Gest-o-Pipeline-TS#readme",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.161",
     "@types/node": "^25.9.1",
     "typescript": "^6.0.3"
   },
