@@ -12,7 +12,8 @@ export const handler = async (event: SQSEvent) => {
 
   for (const record of event.Records) {
     try {
-      const body = JSON.parse(record.body);
+      const body =
+        typeof record.body === "string" ? JSON.parse(record.body) : record.body;
       console.log("Processando gasto para a empresa:", body.company_origin_id);
 
       const valor = Number(body.valor);
@@ -27,7 +28,9 @@ export const handler = async (event: SQSEvent) => {
           data_do_gasto: { S: body.data_da_compra || new Date().toISOString() },
           valor: { N: String(valor) },
           tipo_pagamento: { S: body.tipo_pagamento || "crédito" },
-          categoria: { S: body.categoria || "Geral" },
+          categoria: {
+            S: body.categoria_da_compra || body.categoria || "Geral",
+          },
         },
       });
 
