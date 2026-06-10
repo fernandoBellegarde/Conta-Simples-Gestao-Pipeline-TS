@@ -22,7 +22,7 @@ export const handler = async (event: any) => {
       statusCode: 200,
       headers: {
         "Content-Type": "application/json",
-        "Acess-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(data.Items || []),
     };
