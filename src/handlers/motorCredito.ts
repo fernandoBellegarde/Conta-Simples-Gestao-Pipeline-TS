@@ -7,10 +7,6 @@ import type { DynamoDBStreamEvent } from "aws-lambda";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 
 const client = new DynamoDBClient({ region: "us-east-2" });
-const tableName = process.env.TABELA_DYNAMODB;
-if (!tableName) {
-  throw new Error("Falta a variavel TABELA_DYNAMODB para o motor de crédito");
-}
 
 const limitTableName = process.env.TABELA_LIMIT_DB;
 if (!limitTableName) {
@@ -31,10 +27,8 @@ export const handler = async (event: DynamoDBStreamEvent) => {
 
       const clienteId = cliente.company_origin_id;
 
-      // 🔍 CORREÇÃO: Lendo a coluna correta do seu banco de dados
       let gastoCru = cliente.potencial_gasto;
 
-      // Tratamento caso o valor venha como string formatada (ex: "900.000")
       if (typeof gastoCru === "string") {
         gastoCru = gastoCru.replace(/\./g, "").replace(/,/g, ".");
       }
@@ -44,13 +38,17 @@ export const handler = async (event: DynamoDBStreamEvent) => {
         `Calculando limite. Cliente: ${clienteId} | TPV Potencial: ${tpvPotencial}`,
       );
 
-      // REGRA DO MOTOR DE CRÉDITO (0.30% para TPV >= 100k)
       let limiteConcedido = 0;
-      if (tpvPotencial >= 100000) {
-        limiteConcedido = tpvPotencial * 0.003;
+      if (tpvPotencial >= 100000 && tpvPotencial < 500000) {
+        limiteConcedido = tpvPotencial * 0.7;
+      } else if (tpvPotencial >= 500000 && tpvPotencial < 100000000) {
+        limiteConcedido = tpvPotencial * 1.1;
+      } else if (tpvPotencial >= 100000000) {
+        limiteConcedido = tpvPotencial * 1.3;
       }
 
-      // 1. SALVA NA TABELA AUXILIAR gld_limit (Para o seu Dashboard do Front-end)
+      let limiteFormatado = Math.floor(limiteConcedido);
+
       console.log("Salvando na tabela gld_limit...");
       await client.send(
         new PutItemCommand({
@@ -60,29 +58,12 @@ export const handler = async (event: DynamoDBStreamEvent) => {
             nome_empresa: {
               S: cliente.nome_empresa || cliente.nome || "Sem nome",
             },
-            limite_credito: { N: String(limiteConcedido) },
-            tpv_potencial: { N: String(tpvPotencial) }, // Salvando o valor numérico correto
+            limite_credito: { N: String(limiteFormatado) },
+            tpv_potencial: { N: String(tpvPotencial) },
             atualizado_em: { S: new Date().toISOString() },
           },
         }),
       );
-
-      // 2. ATUALIZAR A TABELA PRINCIPAL gld_client SE HOUVER CRÉDITO CONCEDIDO
-      if (limiteConcedido > 0) {
-        console.log(
-          `Atualizando gld_client com o limite de: R$ ${limiteConcedido}`,
-        );
-        await client.send(
-          new UpdateItemCommand({
-            TableName: tableName,
-            Key: { company_origin_id: { S: String(clienteId) } },
-            UpdateExpression: "SET limite_credito = :limite",
-            ExpressionAttributeValues: {
-              ":limite": { N: String(limiteConcedido) },
-            },
-          }),
-        );
-      }
     } catch (error) {
       console.error("Erro crítico ao processar registro:", error);
     }
