@@ -99,10 +99,16 @@ export const handler = async (_event: APIGatewayProxyEvent) => {
       totalTPV += tpv;
       totalLimite += limiteMap.get(c.company_origin_id) ?? 0;
 
-      const cohort = getCohort(c.data_abertura);
+      // Campo padrão de data de abertura (mesmo usado no cadastro e no front).
+      const dataAbertura = c.data_conta_aberta;
+      if (!dataAbertura || Number.isNaN(new Date(dataAbertura).getTime())) {
+        continue; // sem data válida não entra em cohort/série temporal
+      }
+
+      const cohort = getCohort(dataAbertura);
       porCohort[cohort] = (porCohort[cohort] ?? 0) + 1;
 
-      const mes = getMesAno(new Date(c.data_abertura));
+      const mes = getMesAno(new Date(dataAbertura));
       porMes[mes] = (porMes[mes] ?? 0) + 1;
     }
 
