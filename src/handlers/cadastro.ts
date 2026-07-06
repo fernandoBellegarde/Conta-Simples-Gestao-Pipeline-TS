@@ -4,6 +4,9 @@ export interface CriarClienteInput {
   email_corp: string;
   telefone: string;
   potencial_gasto: number;
+  // Opcional: quando informado, define a data de abertura (ISO). Usado pelos
+  // seeds de cohort (M0/M1/M2). Se ausente, o salvarCliente usa a data atual.
+  data_conta_aberta?: string;
 }
 
 export const handler = async (event: any) => {
